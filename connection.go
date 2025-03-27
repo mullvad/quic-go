@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"reflect"
 	"sync"
@@ -1798,6 +1799,9 @@ func (s *connection) maybeIncreaseMTU(mtu protocol.ByteCount) bool {
 	if mtu <= protocol.ByteCount(s.currentMTUEstimate.Load()) {
 		return false
 	}
+
+	slog.Debug("Updating MTU", "old MTU", s.currentMTUEstimate.Load(), "new MTU", mtu)
+
 	s.currentMTUEstimate.Store(uint32(mtu))
 	s.sentPacketHandler.SetMaxDatagramSize(mtu)
 	return true
@@ -2618,6 +2622,11 @@ func (s *connection) SendDatagram(p []byte) error {
 
 	f := &wire.DatagramFrame{DataLenPresent: true}
 	maxFrameDataLen := f.MaxDataLen(min(s.peerParams.MaxDatagramFrameSize, maxDataLen), s.version)
+
+	slog.Debug("connection.SendDatagram() size check",
+		"datagram size", len(p),
+		"maxFrameDataLen", maxFrameDataLen,
+		"MTU estimate", s.currentMTUEstimate.Load())
 
 	if protocol.ByteCount(len(p)) > maxFrameDataLen {
 		return &DatagramTooLargeError{MaxDatagramPayloadSize: int64(maxFrameDataLen)}

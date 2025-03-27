@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"log/slog"
 	"math/rand/v2"
 	"time"
 
@@ -646,6 +647,10 @@ func (p *packetPacker) composeNextPacket(
 	if p.datagramQueue != nil {
 		if f := p.datagramQueue.Peek(); f != nil {
 			size := f.Length(v)
+
+			slog.Debug("Peek'ed datagram", "adjusted datagram size", size, "max frame size", maxPayloadSize,
+				"available remanining size", maxPayloadSize-pl.length)
+
 			if size <= maxPayloadSize-pl.length { // DATAGRAM frame fits
 				pl.frames = append(pl.frames, ackhandler.Frame{Frame: f})
 				pl.length += size
@@ -655,6 +660,8 @@ func (p *packetPacker) composeNextPacket(
 				// Discard this frame. There's no point in retrying this in the next packet,
 				// as it's unlikely that the available packet size will increase.
 				p.datagramQueue.Pop()
+
+				slog.Debug("DROPPED egress datagram")
 			}
 			// If the DATAGRAM frame was too large and the packet contained an ACK, we'll try to send it out later.
 		}
