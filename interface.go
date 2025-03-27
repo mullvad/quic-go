@@ -198,6 +198,8 @@ type Connection interface {
 	ReceiveDatagram(context.Context) ([]byte, error)
 
 	AddPath(*Transport) (*Path, error)
+
+	IncreaseMTU(mtu uint16)
 }
 
 // An EarlyConnection is a connection that is handshaking.

@@ -1784,12 +1784,22 @@ func (s *connection) handleAckFrame(frame *wire.AckFrame, encLevel protocol.Encr
 	}
 	// If one of the acknowledged packets was a Path MTU probe packet, this might have increased the Path MTU estimate.
 	if s.mtuDiscoverer != nil {
-		if mtu := s.mtuDiscoverer.CurrentSize(); mtu > protocol.ByteCount(s.currentMTUEstimate.Load()) {
-			s.currentMTUEstimate.Store(uint32(mtu))
-			s.sentPacketHandler.SetMaxDatagramSize(mtu)
-		}
+		s.maybeIncreaseMTU(s.mtuDiscoverer.CurrentSize())
 	}
 	return s.cryptoStreamHandler.SetLargest1RTTAcked(frame.LargestAcked())
+}
+
+func (s *connection) maybeIncreaseMTU(mtu protocol.ByteCount) bool {
+	if mtu <= protocol.ByteCount(s.currentMTUEstimate.Load()) {
+		return false
+	}
+	s.currentMTUEstimate.Store(uint32(mtu))
+	s.sentPacketHandler.SetMaxDatagramSize(mtu)
+	return true
+}
+
+func (s *connection) IncreaseMTU(mtu uint16) {
+	s.maybeIncreaseMTU(protocol.ByteCount(mtu))
 }
 
 func (s *connection) handleDatagramFrame(f *wire.DatagramFrame) error {
@@ -2490,7 +2500,7 @@ func (s *connection) maxPacketSize() protocol.ByteCount {
 		// * If it did, we will have processed the transport parameters and initialized the MTU discoverer.
 		return protocol.MinInitialPacketSize
 	}
-	return s.mtuDiscoverer.CurrentSize()
+	return max(s.mtuDiscoverer.CurrentSize(), protocol.ByteCount(s.currentMTUEstimate.Load()))
 }
 
 // AcceptStream returns the next stream openend by the peer
