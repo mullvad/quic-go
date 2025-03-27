@@ -311,6 +311,42 @@ func (c *MockEarlyConnectionHandshakeCompleteCall) DoAndReturn(f func() <-chan s
 	return c
 }
 
+// IncreaseMTU mocks base method.
+func (m *MockEarlyConnection) IncreaseMTU(mtu uint16) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "IncreaseMTU", mtu)
+}
+
+// IncreaseMTU indicates an expected call of IncreaseMTU.
+func (mr *MockEarlyConnectionMockRecorder) IncreaseMTU(mtu any) *MockEarlyConnectionIncreaseMTUCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncreaseMTU", reflect.TypeOf((*MockEarlyConnection)(nil).IncreaseMTU), mtu)
+	return &MockEarlyConnectionIncreaseMTUCall{Call: call}
+}
+
+// MockEarlyConnectionIncreaseMTUCall wrap *gomock.Call
+type MockEarlyConnectionIncreaseMTUCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockEarlyConnectionIncreaseMTUCall) Return() *MockEarlyConnectionIncreaseMTUCall {
+	c.Call = c.Call.Return()
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockEarlyConnectionIncreaseMTUCall) Do(f func(uint16)) *MockEarlyConnectionIncreaseMTUCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockEarlyConnectionIncreaseMTUCall) DoAndReturn(f func(uint16)) *MockEarlyConnectionIncreaseMTUCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // LocalAddr mocks base method.
 func (m *MockEarlyConnection) LocalAddr() net.Addr {
 	m.ctrl.T.Helper()

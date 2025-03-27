@@ -310,6 +310,42 @@ func (c *MockQUICConnHandshakeCompleteCall) DoAndReturn(f func() <-chan struct{}
 	return c
 }
 
+// IncreaseMTU mocks base method.
+func (m *MockQUICConn) IncreaseMTU(mtu uint16) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "IncreaseMTU", mtu)
+}
+
+// IncreaseMTU indicates an expected call of IncreaseMTU.
+func (mr *MockQUICConnMockRecorder) IncreaseMTU(mtu any) *MockQUICConnIncreaseMTUCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncreaseMTU", reflect.TypeOf((*MockQUICConn)(nil).IncreaseMTU), mtu)
+	return &MockQUICConnIncreaseMTUCall{Call: call}
+}
+
+// MockQUICConnIncreaseMTUCall wrap *gomock.Call
+type MockQUICConnIncreaseMTUCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockQUICConnIncreaseMTUCall) Return() *MockQUICConnIncreaseMTUCall {
+	c.Call = c.Call.Return()
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockQUICConnIncreaseMTUCall) Do(f func(uint16)) *MockQUICConnIncreaseMTUCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockQUICConnIncreaseMTUCall) DoAndReturn(f func(uint16)) *MockQUICConnIncreaseMTUCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // LocalAddr mocks base method.
 func (m *MockQUICConn) LocalAddr() net.Addr {
 	m.ctrl.T.Helper()
