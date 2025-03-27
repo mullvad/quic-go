@@ -292,3 +292,7 @@ func (r *tracingReader) Read(b []byte) (int, error) {
 	}
 	return n, err
 }
+
+func (s *stream) increaseMTU(mtu uint16) {
+	s.conn.IncreaseMTU(mtu)
+}
