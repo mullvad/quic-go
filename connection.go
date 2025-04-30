@@ -436,6 +436,11 @@ var newClientConnection = func(
 	} else {
 		params.MaxDatagramFrameSize = protocol.InvalidByteCount
 	}
+	if s.config.ClientTransportParamMaxUDPPayloadSize != nil {
+		maxUDP := protocol.ByteCount(*s.config.ClientTransportParamMaxUDPPayloadSize)
+		params.MaxUDPPayloadSize = maxUDP
+	}
+
 	if s.tracer != nil && s.tracer.SentTransportParameters != nil {
 		s.tracer.SentTransportParameters(params)
 	}
