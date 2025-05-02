@@ -278,6 +278,14 @@ func (s *stream) ReceiveDatagram(ctx context.Context) ([]byte, error) {
 	return s.datagrams.Receive(ctx)
 }
 
+func (s *stream) increaseMTU(mtu uint16) {
+	s.conn.IncreaseMTU(mtu)
+}
+
+func (s *stream) getPeerTransportParamMaxUDPPayloadSize() (uint16, error) {
+	return s.conn.GetPeerTransportParamMaxUDPPayloadSize()
+}
+
 type tracingReader struct {
 	io.Reader
 	first *bool

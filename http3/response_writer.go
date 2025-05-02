@@ -19,6 +19,7 @@ import (
 // When a stream is taken over, it's the caller's responsibility to close the stream.
 type HTTPStreamer interface {
 	HTTPStream() Stream
+	HTTPStreamWithSizeInfo() (Stream, uint16)
 }
 
 // The maximum length of an encoded HTTP/3 frame header is 16:
@@ -329,6 +330,14 @@ func (w *responseWriter) HTTPStream() Stream {
 	w.hijacked = true
 	w.Flush()
 	return w.str
+}
+
+func (w *responseWriter) HTTPStreamWithSizeInfo() (Stream, uint16) {
+	size, err := w.str.getPeerTransportParamMaxUDPPayloadSize()
+	if err != nil {
+		return w.HTTPStream(), 0
+	}
+	return w.HTTPStream(), size
 }
 
 func (w *responseWriter) wasStreamHijacked() bool { return w.hijacked }
