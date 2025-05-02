@@ -2691,6 +2691,13 @@ func (s *connection) NextConnection(ctx context.Context) (Connection, error) {
 	return s, nil
 }
 
+func (s *connection) GetPeerTransportParamMaxUDPPayloadSize() (uint16, error) {
+	if s.peerParams == nil {
+		return 0, errors.New("no transport parameters received")
+	}
+	return uint16(s.peerParams.MaxUDPPayloadSize), nil
+}
+
 // estimateMaxPayloadSize estimates the maximum payload size for short header packets.
 // It is not very sophisticated: it just subtracts the size of header (assuming the maximum
 // connection ID length), and the size of the encryption tag.

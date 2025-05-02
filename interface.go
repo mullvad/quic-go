@@ -200,6 +200,7 @@ type Connection interface {
 	AddPath(*Transport) (*Path, error)
 
 	IncreaseMTU(mtu uint16)
+	GetPeerTransportParamMaxUDPPayloadSize() (uint16, error)
 }
 
 // An EarlyConnection is a connection that is handshaking.
