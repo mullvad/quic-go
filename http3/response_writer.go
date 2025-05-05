@@ -337,6 +337,7 @@ func (w *responseWriter) HTTPStreamWithSizeInfo() (Stream, uint16) {
 	if err != nil {
 		return w.HTTPStream(), 0
 	}
+	w.str.increaseMTU(size)
 	return w.HTTPStream(), size
 }
 
