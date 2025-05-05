@@ -2063,7 +2063,8 @@ func (s *connection) applyTransportParameters() {
 	}
 	maxPacketSize := protocol.ByteCount(protocol.MaxPacketBufferSize)
 	if params.MaxUDPPayloadSize > 0 && params.MaxUDPPayloadSize < maxPacketSize {
-		maxPacketSize = params.MaxUDPPayloadSize
+		// Apply clamping. quic-go uses 1200 elsewhere, e.g. in config validation and adjustments.
+		maxPacketSize = max(params.MaxUDPPayloadSize, 1200)
 	}
 	s.mtuDiscoverer = newMTUDiscoverer(
 		s.rttStats,
